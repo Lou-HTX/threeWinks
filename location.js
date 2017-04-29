@@ -4,7 +4,7 @@
     let lat = pos.lat;
     let lng = pos.lng;
 
-    $.get('http://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true', function(data) {
+    $.get('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=true', function(data) {
       myLocation(data);
     });
   };
