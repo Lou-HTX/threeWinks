@@ -1,6 +1,6 @@
 function weatherAPI(place, state){
   $.ajax({
-  url : "https://api.wunderground.com/api/96d25e39e45771c9/geolookup/conditions/q/"+state+"/"+place+".json",
+  url : "http://api.wunderground.com/api/96d25e39e45771c9/geolookup/conditions/q/"+state+"/"+place+".json",
   dataType : "jsonp",
   success : function(parsed_json) {
     //Variables for conditions
