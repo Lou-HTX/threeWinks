@@ -46,8 +46,8 @@
   function myLocation(location){
     console.log(location);
     loc = location.results[3].address_components;
-    city = loc[1].long_name;
-    state = loc[3].short_name;
+    city = loc[0].long_name;
+    state = loc[2].short_name;
     console.log(loc, city, state);
     weatherAPI(city, state);
   }
