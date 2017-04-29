@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Three Winks</title>
+    <link href="./css/foundation.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <style>
+    html,
+    body {
+        overflow: hidden;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body,
+    span,
+    p,
+    div, * {
+        font-family: 'Roboto', sans-serif;
+    }
+    
+    #player-div {
+        margin: 0 auto;
+        text-align: center;
+        //height: 150px !important;
+        height: 352px !important;
+        box-shadow: 1px 6px 5px rgba(0,0,0,0.7)
+    }
+    
+    iframe {
+        //height: 150px !important;
+        height: 352px !important;
+    }
+    /* entire container, keeps perspective */
+    
+    .flip-container {
+        perspective: 1000px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    /* flip the pane when hovered */
+    
+    .flip-container.hover .flipper {
+        transform: rotateY(180deg);
+    }
+    
+    .flip-container,
+    .front,
+    .back {
+        width: 300px;
+        height: 380px;
+    }
+    /* flip speed goes here */
+    
+    .flipper {
+        transition: 0.6s;
+        transform-style: preserve-3d;
+        position: relative;
+    }
+    /* hide back of pane during swap */
+    
+    .front,
+    .back {
+        backface-visibility: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    /* front pane, placed above back */
+    
+    .front {
+        z-index: 2;
+        /* for firefox 31 */
+        transform: rotateY(0deg);
+    }
+    /* back, initially hidden pane */
+    
+    .back {
+        transform: rotateY(180deg);
+        background-image: url('concertBkgrd.png');
+        background-size: 100% 100%;
+    }
+    
+    .player {
+        text-align: center;
+        margin: 0 auto;
+    }
+    
+    .logo {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+    
+    .logo-winks {
+        text-align: center;
+        margin-top: -240px;
+        margin-bottom: -70px;
+    }
+    
+    .logo-winks img:nth-of-type(1) {
+        z-index: 1000;
+        position: relative;
+        margin: 0 -306px 0 auto;
+        text-align: center;
+        animation: 3s spin infinite linear;
+        width: 300px;
+    }
+    
+    @keyframes spin {
+        0% {
+            transform: rotateZ(0deg);
+        }
+        100% {
+            transform: rotateZ(360deg);
+        }
+    }
+    
+    .logo-winks img:nth-of-type(2) {
+        z-index: 2000;
+        position: relative;
+        width: 300px;
+    }
+    
+    canvas {
+        position: absolute;
+        z-index: -10;
+        top: 0;
+        left: 0;
+    }
+    
+    .cover {
+        position: absolute;
+        background: url('player4.png');
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        width: 104%;
+        height: 119px;
+        margin-left: -7px;
+        background-size: 100% 97%;
+        margin-top: -6px;
+    }
+    
+    .background {
+        background-image: url('project1-nightloftimage-back.png');
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-position-y: center;
+        background-attachment: fixed;
+        width: 100%;
+        position: absolute;
+        z-index: -20;
+        height: 100%;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        top;
+        :
+    }
+    
+    .foreground {
+        background-image: url('project1-nightloftimage-clear.png');
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-position-y: center;
+        background-attachment: fixed;
+        width: 100%;
+        position: absolute;
+        z-index: -5;
+        height: 100%;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        top: 0;
+    }
+    
+    .stick-bottom {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    
+    .metrics {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid black;
+        max-width: 150px;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4c4c4c+0,595959+12,666666+25,474747+39,2c2c2c+50,111111+64,2b2b2b+85,1c1c1c+91,131313+100 */
+        background: rgb(76, 76, 76);
+        /* Old browsers */
+        background: -moz-linear-gradient(top, rgba(76, 76, 76, 1) 0%, rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%, rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(17, 17, 17, 1) 64%, rgba(43, 43, 43, 1) 85%, rgba(28, 28, 28, 1) 91%, rgba(19, 19, 19, 1) 100%);
+        /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(76, 76, 76, 1) 0%, rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%, rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(17, 17, 17, 1) 64%, rgba(43, 43, 43, 1) 85%, rgba(28, 28, 28, 1) 91%, rgba(19, 19, 19, 1) 100%);
+        /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(76, 76, 76, 1) 0%, rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%, rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(17, 17, 17, 1) 64%, rgba(43, 43, 43, 1) 85%, rgba(28, 28, 28, 1) 91%, rgba(19, 19, 19, 1) 100%);
+        /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313', GradientType=0);
+        /* IE6-9 */
+        border-radius: 5px;
+        color: #fff;
+        font-family: 'Roboto', sans-serif;
+    }
+    
+    .clock {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid black;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4c4c4c+0,595959+12,666666+25,474747+39,2c2c2c+50,000000+51,111111+60,2b2b2b+76,1c1c1c+91,131313+100;Black+Gloss+%231 */
+        background: rgb(76, 76, 76);
+        /* Old browsers */
+        background: -moz-linear-gradient(top, rgba(76, 76, 76, 1) 0%, rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%, rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%, rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1) 91%, rgba(19, 19, 19, 1) 100%);
+        /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(76, 76, 76, 1) 0%, rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%, rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%, rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1) 91%, rgba(19, 19, 19, 1) 100%);
+        /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(76, 76, 76, 1) 0%, rgba(89, 89, 89, 1) 12%, rgba(102, 102, 102, 1) 25%, rgba(71, 71, 71, 1) 39%, rgba(44, 44, 44, 1) 50%, rgba(0, 0, 0, 1) 51%, rgba(17, 17, 17, 1) 60%, rgba(43, 43, 43, 1) 76%, rgba(28, 28, 28, 1) 91%, rgba(19, 19, 19, 1) 100%);
+        /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313', GradientType=0);
+        /* IE6-9 */
+        border-radius: 5px;
+        margin: 50px auto 0;
+        max-width: 300px;
+        color: #fff;
+        position: relative;
+        z-index: 10000;
+        font-family: 'Roboto', sans-serif;
+    }
+    
+    .logo-winks {
+        text-align: center;
+        margin-top: -240px;
+        margin-bottom: -70px;
+    }
+    
+    .player {
+        top: 50%;
+        left: 50%;
+        margin-left: -150px;
+        position: absolute;
+        margin-top: -150px;
+        text-align: center;
+    }
+    
+    .flip-container {
+        position: relative;
+        top: 50%;
+    }
+    
+    .to-middle {
+        position: relative;
+        border: 2px solid red;
+        top: 50%;
+    }
+    /*canvas.sky {
+        background: url('https://scitechdaily.com/images/A-new-Image-of-the-Prawn-Nebula.jpg') no-repeat;
+        background-size: 150% 150%;
+        animation: spinspin 250s infinite linear;
+        width: 235%;
+        height: 290%;
+        margin-left: -69%;
+        margin-top: -30%;
+        position: relative;
+        z-index: -500;
+        transform-origin: 51% 50%;
+    }*/
+    
+    @keyframes spinspin {
+        0% {
+            transform: rotateZ(0deg);
+        }
+        100% {
+            transform: rotateZ(360deg);
+        }
+    }
+    
+    #container {
+        //background: #000;
+        width: 2000px;
+        height: 2000px;
+        animation: 10s;
+        opacity: 1;
+        transition: opacity 5s;
+    }
+    
+    .black {
+        background-color: black;
+    }
+    
+    .video-container {
+        opacity: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 5000;
+    }
+    
+    .disappear {
+        opacity: 0;
+        transition: opacity 5s;
+    }
+    
+    #container.appear {
+        opacity: 1 !important;
+        display: inline-block;
+    }
+    
+    .no-show {
+        display: none;
+        opacity: 0;
+    }
+    
+    #canvasVid {
+        position: absolute;
+        z-index: 5500;
+    }
+    
+    .city-name.city.text h1 {
+        font-size: 18px;
+    }
+    
+    .temp.text {
+        font-size: 24px;
+    }
+    
+    .time {
+        font-size: 26px;
+        text-transform: uppercase;
+    }
+    
+    .current-time {
+        font-size: 52px;
+    }
+    
+    p {
+        line-height: 1;
+        font-size: 13px;
+        color: #fff;
+    }
+    
+    .concert {
+        margin-top: 30px;
+    }
+    
+    div.waterBG {
+        //background: url('http://www.storywarren.com/wp-content/uploads/2016/09/space-1.jpg');
+        background: url('http://kingofwallpapers.com/underwater/underwater-007.jpg');
+        background-size: 100% 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150%;
+        height: 150%;
+        animation: water 60s infinite linear;
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    
+    div.spaceBG {
+        //background: url('http://www.storywarren.com/wp-content/uploads/2016/09/space-1.jpg');
+        background: url('https://assets.wired.com/photos/w_2000/wp-content/uploads/2016/12/BSP_054.jpg');
+        background-size: 100% 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150%;
+        height: 150%;
+        animation: spaceTravel 60s infinite linear;
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+    
+    @keyframes spaceTravel {
+        0% {
+            width: 150%;
+            transform: rotateZ(0deg);
+        }
+        50% {
+            width: 160%;
+            transform: rotateZ(5deg);
+        }
+        100% {
+            width: 150%;
+            transform: rotateZ(0deg);
+        }
+    }
+    
+    @keyframes water {
+        0% {
+            transform: scale(1, 1);
+        }
+        100% {
+            transform: scale(1.5, 1.5);
+        }
+    }
+    
+    body {
+        overflow: hidden;
+    }
+    
+    canvas {
+        position: absolute;
+        opacity: 0.4;
+    }
+    </style>
+</head>
+
+<body class="black">
+    <canvas style="display:none;" id="canvas" width="1700" height="1100"></canvas>
+    <canvas style="display:none;" id="canvas3" width="1700" height="1100"></canvas>
+    <canvas id="canvas2" width="2000" height="1100" style="width:120%; margin-left:-1px">*** THIS BROWSER DOES NOT SUPPORT THE CANVAS ELEMENT ***</canvas>
+
+    <div class="background"></div>
+
+    <div class="foreground"></div>
+    <div class="content">
+        <div class="scene-content"></div>
+ 
+        <div class="video-conatiner">
+            <video width="100" height="100" class="sunrise" style="display:none;">
+                <source src="sunrise.mp4" type="video/mp4"> Your browser does not support the video tag.
+            </video>
+        </div>
+        <div class="rozzw" style="height: 1000px">
+            <div class="small-zz12 coluzzzmns">
+
+                <div id="map"></div>
+
+                <div class="rowzzz">
+                    <div class="smallzzz-12 columzzns smazzll-cezzntered">
+                        <div class="clock">
+                            <span class="current-time text"></span>
+                            <br>
+                            <span class="time text"></span>
+                        </div>
+                        <div class="player">
+                            <div class="flip-container" ontouchstart="this.classList.toggle('hover');">
+                                <div class="flipper">
+                                    <div class="front">
+                                        <div class="cover"></div>
+                                        <div id="player-div"></div>
+                                    </div>
+                                    <div class="back">
+                                        <div id="concerts-view"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="stick-bottom">
+        <div class="metrics">
+            <span class="temp text play-button-custom"></span>
+            <span class="city-name city text"></span>
+        </div>
+
+        <div class="logo-winks">
+            <img src="3winks_eye.png" alt="logo">
+            <img src="3winks_eyelid.png" alt="logo">
+        </div>
+    </div>
+    <script src="javascript-conditions.js"></script>
+    <script src="jquery.js"></script>
+    <script src="location.js"></script>
+    <script src="weather.js"></script>
+    <script src="concert.js"></script>
+    <script src="playlist.js"></script>
+    <script src="./js/vendor/foundation.js"></script>
+
+    <script>
+    $(function() {
+        var tm = document.querySelector('.current-time');
+        var now = moment().format('LT');
+
+        tm.textContent = now;
+    });
+    </script>
+    <script>
+    var sbg = document.querySelector('.scene-content');
+    var con = document.querySelector('.content');
+
+    function createContainer() {
+        var div = document.createElement('div');
+        div.classList.add('scene-content');
+        con.append(div);
+    }
+
+    function buildScene(build) {
+        var div = document.createElement('div');
+        div.classList.add(build);
+        sbg.append(div);
+        //setTimeout(removeScene(build), 1000);
+    }
+
+    function removeScene(remove) {
+        while (sbg.hasChildNodes()) {
+            sbg.removeChild(sbg.lastChild);
+        }
+    }
+
+    setTimeout(function() {
+        buildScene('spaceBG');
+    }, 60000);
+
+    setTimeout(function() {
+        buildScene('waterBG');
+    }, 120000);
+
+    setTimeout(function() {
+        removeScene(sbg);
+    }, 180000);
+
+    setTimeout(function() {
+        buildScene('spaceBG');
+    }, 240000);
+
+    setTimeout(function() {
+        buildScene('waterBG');
+    }, 320000);
+
+    setTimeout(function() {
+        removeScene(sbg);
+    }, 380000);
+
+    setTimeout(function() {
+        buildScene('spaceBG');
+    }, 420000);
+
+    setTimeout(function() {
+        buildScene('waterBG');
+    }, 480000);
+
+    setTimeout(function() {
+        removeScene(sbg);
+    }, 540000);
+
+    setTimeout(function() {
+        buildScene('spaceBG');
+    }, 600000);
+
+    setTimeout(function() {
+        buildScene('waterBG');
+    }, 660000);
+
+    setTimeout(function() {
+        removeScene(sbg);
+    }, 720000);
+
+    </script>
+    <script src="js/foundation.min.js"></script>
+    <script src="js/canvas-nebula.js"></script>
+    <script src="js/jquery.animate-shadow-min.js"></script>
+    <script>
+    $(document).foundation();
+    </script>
+    
+    <script>
+    var lw = document.querySelector('.logo-winks');
+    var fc = document.querySelector('.flip-container');
+    lw.addEventListener('click', function() {
+        fc.classList.toggle('hover');
+    });
+    </script>
+    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8H--hl0szJccEb1vKwjjFtYVSZM-IKJk&callback=initMap">
+    </script>
+</body>
+
+</html>
